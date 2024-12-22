@@ -71,6 +71,38 @@ local function getAppSpecificShortcuts()
     return shortcuts[focusedApp] or shortcuts.default
 end
 
+-- Function to handle scrolling in the canvas
+local function scrollShortcuts(direction)
+    if not shortcutsCanvas then return end
+
+    -- Get shortcuts for the current app
+    local appShortcuts = getAppSpecificShortcuts()
+    local totalShortcuts = #appShortcuts
+
+    -- Update visible content range
+    if direction == "up" and visibleContentStart > 1 then
+        visibleContentStart = visibleContentStart - 1
+        visibleContentEnd = visibleContentEnd - 1
+    elseif direction == "down" and visibleContentEnd < totalShortcuts then
+        visibleContentStart = visibleContentStart + 1
+        visibleContentEnd = visibleContentEnd + 1
+    end
+
+    -- Ensure visibleContentEnd does not exceed totalShortcuts
+    visibleContentEnd = math.min(visibleContentEnd, totalShortcuts)
+
+    -- Ensure visibleContentStart does not go below 1
+    visibleContentStart = math.max(1, visibleContentStart)
+
+    -- Update the displayed message
+    local message = ""
+    for i = visibleContentStart, visibleContentEnd do
+        local shortcut = appShortcuts[i]
+        message = message .. shortcut[1] .. " - " .. shortcut[2] .. "\n"
+    end
+    shortcutsCanvas[3].text = message
+end
+
 -- Function to toggle the shortcuts display
 local function toggleShortcuts()
     if shortcutsCanvas then
@@ -79,7 +111,22 @@ local function toggleShortcuts()
         shortcutsCanvas = nil
         visibleContentStart = 1
         visibleContentEnd = 8
+
+        upKeyBind:disable()
+        downKeyBind:disable()
     else
+        if upKeyBind == nil then
+            upKeyBind = hs.hotkey.bind({}, "up", function() scrollShortcuts("up") end)
+        else
+            upKeyBind:enable()
+        end
+
+        if downKeyBind == nil then
+            downKeyBind = hs.hotkey.bind({}, "down", function() scrollShortcuts("down") end)
+        else
+            downKeyBind:enable() 
+        end
+
         -- Get shortcuts for the current app
         local appShortcuts = getAppSpecificShortcuts()
 
@@ -132,46 +179,8 @@ local function toggleShortcuts()
     end
 end
 
--- Function to handle scrolling in the canvas
-local function scrollShortcuts(direction)
-    if not shortcutsCanvas then return end
-
-    -- Get shortcuts for the current app
-    local appShortcuts = getAppSpecificShortcuts()
-    local totalShortcuts = #appShortcuts
-
-    -- Update visible content range
-    if direction == "up" and visibleContentStart > 1 then
-        visibleContentStart = visibleContentStart - 1
-        visibleContentEnd = visibleContentEnd - 1
-    elseif direction == "down" and visibleContentEnd < totalShortcuts then
-        visibleContentStart = visibleContentStart + 1
-        visibleContentEnd = visibleContentEnd + 1
-    end
-
-    -- Ensure visibleContentEnd does not exceed totalShortcuts
-    visibleContentEnd = math.min(visibleContentEnd, totalShortcuts)
-
-    -- Ensure visibleContentStart does not go below 1
-    visibleContentStart = math.max(1, visibleContentStart)
-
-    -- Update the displayed message
-    local message = ""
-    for i = visibleContentStart, visibleContentEnd do
-        local shortcut = appShortcuts[i]
-        message = message .. shortcut[1] .. " - " .. shortcut[2] .. "\n"
-    end
-    shortcutsCanvas[3].text = message
-end
-
 -- Bind the helper to Ctrl + Alt + /
 hs.hotkey.bind({ "ctrl", "alt" }, "/", toggleShortcuts)
-
--- Bind scrolling functionality
-hs.hotkey.bind({}, "up", function() scrollShortcuts("up") end)
-hs.hotkey.bind({}, "down", function() scrollShortcuts("down") end)
-
-
 
 -- Window Resizing. No other spoon is used for this.
 -- Upper-Left corner
