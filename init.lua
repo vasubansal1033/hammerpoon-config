@@ -21,6 +21,9 @@ local shortcuts = {
         { "Ctrl + F2", "Shortcut for screen menu bar" }
     },
     vim = {
+        {"Ctrl + P", "Telescope file viewer"},
+        {"Ctrl + n", "Open file explorer on left"},
+        {"q:", "Open command history"},
         {"%", "Jump to the matching parenthesis, bracket, or brace"},
         {"*", "Search forward for the word under the cursor"},
         {"#", "Search backward for the word under the cursor"},
