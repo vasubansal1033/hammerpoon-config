@@ -19,6 +19,7 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function()
     hs.reload()
     hs.alert.show("Hammerspoon configuration reloaded")
 end)
+
 -- Window Resizing. No other spoon is used for this.
 hs.loadSpoon("WindowResizing")
 spoon.WindowResizing:bindHotkeys({

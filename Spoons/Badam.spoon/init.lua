@@ -50,6 +50,12 @@ local appSpecificShortcuts = {
                 {modifiers = nil, keys = ":sort", description = "Sort selected lines alphabetically"}                
             }
         },
+        {
+            category = "ITerm2",
+            shortcuts = {
+                {modifier = obj.commandEnum, keys = "_", description = "Undo the last change"}
+            }
+        }
         
     },
     ["Default"] = {
@@ -100,6 +106,19 @@ local function generateHtml(application)
                 font-size: 22px;
                 margin-top: 20px;
                 text-align: center;
+                cursor: pointer;
+                background-color: #ddd;
+                padding: 10px;
+                border-radius: 5px;
+                user-select: none;
+                transition: background-color 0.3s ease;
+            }
+            .category.expanded {
+                background-color: #cce7ff; /* Light blue when expanded */
+            }
+            .shortcuts {
+                display: none; /* Initially hidden */
+                margin-top: 10px;
             }
             .shortcut {
                 display: flex;
@@ -133,13 +152,30 @@ local function generateHtml(application)
                 padding: 20px;
             }
         </style>
+
+        <script>
+            function toggleCategory(event) {
+                const categoryDiv = event.target;
+                const shortcutsDiv = categoryDiv.nextElementSibling;
+
+                if (shortcutsDiv.style.display === "none" || shortcutsDiv.style.display === "") {
+                    shortcutsDiv.style.display = "block";
+                    categoryDiv.classList.add("expanded"); // Change color when expanded
+                } else {
+                    shortcutsDiv.style.display = "none";
+                    categoryDiv.classList.remove("expanded"); // Revert color when collapsed
+                }
+            }
+            
+        </script>
+
         </head>
         <body>
         <div class="container">
     ]]
 
     for _, section in ipairs(shortcuts) do
-        html = html .. "<div class='category'>" .. section.category .. "</div><div class='shortcuts'>"
+        html = html .. "<div class='category' onclick='toggleCategory(event)'>" .. section.category .. "</div><div class='shortcuts'>"
         for _, shortcut in ipairs(section.shortcuts) do
             html = html .. [[ <div class="shortcut"> ]]
             if shortcut.modifiers then
@@ -169,9 +205,9 @@ function obj:init()
     local cscreen = hs.screen.mainScreen()
     local cres = cscreen:fullFrame()
     self.sheetView:frame({
-        x = cres.x + cres.w * 0.15 / 2,
+        x = cres.x + cres.w * 0.50 / 2,
         y = cres.y + cres.h * 0.25 / 2,
-        w = cres.w * 0.85,
+        w = cres.w * 0.50,
         h = cres.h * 0.75
     })
 end
