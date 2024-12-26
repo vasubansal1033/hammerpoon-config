@@ -53,7 +53,11 @@ local appSpecificShortcuts = {
         {
             category = "ITerm2",
             shortcuts = {
-                {modifier = obj.commandEnum, keys = "_", description = "Undo the last change"}
+                {modifier = obj.commandEnum, keys = "_", description = "Undo the last change"},
+                {modifier = nil, keys = "bindkey", description = "List all keyboard mappings"},
+                {modifier = obj.commandEnum.command, keys = "1/2/3", description = "Change window"},
+                {modifier = obj.commandEnum.command, keys = "[ ]", description = "Cycle through current window panes"},
+                {modifier = obj.commandEnum.commandEnum, keys "/", description = "Highlight cursor"},
             }
         }
         
