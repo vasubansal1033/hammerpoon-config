@@ -15,7 +15,7 @@ spoon.Badam:bindHotkeys({
 
 -- Below is to setup ReloadConfiguration
 hs.loadSpoon("ReloadConfiguration")
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function()
+hs.hotkey.bind(hyper, "R", function()
     hs.reload()
     hs.alert.show("Hammerspoon configuration reloaded")
 end)

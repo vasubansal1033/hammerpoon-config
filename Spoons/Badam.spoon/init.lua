@@ -47,17 +47,29 @@ local appSpecificShortcuts = {
                 {modifiers = nil, keys = ":m -2", description = "Move the current line up by one line"},
                 {modifiers = nil, keys = "~", description = "Toggle the case of the character under the cursor"},
                 {modifiers = nil, keys = "g~iw", description = "Toggle the case of the word the cursor is on"},
-                {modifiers = nil, keys = ":sort", description = "Sort selected lines alphabetically"}                
+                {modifiers = nil, keys = ":sort", description = "Sort selected lines alphabetically"},
             }
         },
         {
             category = "ITerm2",
             shortcuts = {
-                {modifier = obj.commandEnum, keys = "_", description = "Undo the last change"},
-                {modifier = nil, keys = "bindkey", description = "List all keyboard mappings"},
-                {modifier = obj.commandEnum.command, keys = "1/2/3", description = "Change window"},
-                {modifier = obj.commandEnum.command, keys = "[ ]", description = "Cycle through current window panes"},
-                {modifier = obj.commandEnum.commandEnum, keys "/", description = "Highlight cursor"},
+                {modifiers = obj.commandEnum.cmd, keys = "_", description = "Undo the last change"},
+                {modifiers = nil, keys = "bindkey", description = "List all keyboard mappings"},
+                {modifiers = obj.commandEnum.cmd, keys = "1/2/3", description = "Change window"},
+                {modifiers = obj.commandEnum.cmd, keys = "[ ]", description = "Cycle through current window panes"},
+                {modifiers= obj.commandEnum.cmd, keys = "/", description = "Highlight cursor"},
+                {modifiers = obj.commandEnum.cmd .. obj.commandEnum.alt, keys = "I", description = "Broadcast command to all panes"},
+            }
+        },
+        {
+            category = "Tmux",
+            shortcuts = {
+              {modifiers = obj.commandEnum.cmd, keys = "A", description = "Leader combination"},
+              {modifiers = nil, keys = "C", description = "Create new window"},
+              {modifiers = nil, keys = "N", description = "Cycle through windows"},
+              {modifiers = nil, keys = "0/1/2..", description = "Move to that window"},
+              {modifiers = nil, keys = ":", description = "Enter command mode"},
+              {modifiers = nil, keys = "D", description = "Dettach from tmux session"},
             }
         }
         
@@ -198,22 +210,57 @@ local function generateHtml(application)
     return html
 end
 
---- Initialize the spoon
 function obj:init()
+    self:createWebView()
+    self:startScreenWatcher()
+end
+
+function obj:createWebView()
+    if self.sheetView then
+        self.sheetView:delete() -- Remove existing webview before creating a new one
+    end
+
     self.sheetView = hs.webview.new({x = 0, y = 0, w = 0, h = 0})
     self.sheetView:windowTitle("CheatSheets")
     self.sheetView:windowStyle("utility")
     self.sheetView:allowGestures(true)
     self.sheetView:allowNewWindows(false)
     self.sheetView:level(hs.drawing.windowLevels.tornOffMenu)
-    local cscreen = hs.screen.mainScreen()
+
+    self:centerWebView()
+    self.sheetView:hide()
+end
+
+function obj:centerWebView()
+    -- Get the current primary screen and its resolution
+    local cscreen = hs.screen.primaryScreen()
     local cres = cscreen:fullFrame()
+
+    -- Define the webview size (e.g., 50% width, 75% height)
+    local webviewWidth = cres.w * 0.50
+    local webviewHeight = cres.h * 0.75
+
+    -- Calculate center position
+    local centerX = cres.x + (cres.w - webviewWidth) / 2
+    local centerY = cres.y + (cres.h - webviewHeight) / 2
+
     self.sheetView:frame({
-        x = cres.x + cres.w * 0.50 / 2,
-        y = cres.y + cres.h * 0.25 / 2,
-        w = cres.w * 0.50,
-        h = cres.h * 0.75
+        x = centerX,
+        y = centerY,
+        w = webviewWidth,
+        h = webviewHeight
     })
+
+    -- Show the webview after positioning
+    self.sheetView:show()
+end
+
+function obj:startScreenWatcher()
+    self.screenWatcher = hs.screen.watcher.new(function()
+        self.sheetView:hide()
+        self:centerWebView() -- Re-center the webview when screen configuration changes
+    end)
+    self.screenWatcher:start()
 end
 
 --- Show the app-specific keybindings in a view
