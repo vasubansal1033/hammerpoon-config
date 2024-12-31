@@ -80,10 +80,13 @@ local appSpecificShortcuts = {
             shortcuts = {
                 {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = "J/K", description = "Move between windows in same screen"},
                 {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = "H/L", description = "Increase decrease size of window"},
-                {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = "Enter", description = "Swap with main"},
                 {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = "T", description = "Toggle floating"},
                 {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = obj.commandEnum.space, description = "Change between layouts"},
                 {modifiers = obj.commandEnum.alt .. obj.commandEnum.ctrl .. obj.commandEnum.shift, keys = "T", description = "Enable/Disable Amethyst"},
+                {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = "Enter", description = "Switch current window with main window"},
+                {modifiers = obj.commandEnum.ctrl .. obj.commandEnum.shift .. obj.commandEnum.alt, keys = "J/K", description = "Switch current window with next/prev window"},
+                {modifiers = obj.commandEnum.alt .. obj.commandEnum.shift, keys = "W/E/R", description = "Change focus to screen 1/2/3"},
+                {modifiers = obj.commandEnum.ctrl .. obj.commandEnum.alt .. obj.commandEnum.shift, keys = "W/E/R", description = "Throw current window to screen 1/2/3"},
             }
         },
         {
