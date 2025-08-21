@@ -14,11 +14,15 @@ spoon.Badam:bindHotkeys({
 })
 
 -- Below is to setup ReloadConfiguration
-hs.loadSpoon("ReloadConfiguration")
-hs.hotkey.bind(hyper, "R", function()
-    hs.reload()
-    hs.alert.show("Hammerspoon configuration reloaded")
-end)
+spoon.SpoonInstall:andUse("ReloadConfiguration", {
+  hotkeys = {
+    reloadConfiguration = {hyper, "R"}
+  },
+  config = {
+    watch_paths = {hs.configdir}
+  },
+  start = true
+})
 
 -- Window Resizing. No other spoon is used for this.
 hs.loadSpoon("WindowResizing")
@@ -48,6 +52,22 @@ spoon.SpoonInstall:andUse("TextClipboardHistory",
                  start = true,
                }
 )
+
+hs.loadSpoon("Cherry")
+
+-- Configure Cherry.spoon settings
+spoon.Cherry.workDuration = 25
+spoon.Cherry.shortBreakDuration = 5
+spoon.Cherry.longBreakDuration = 15
+spoon.Cherry.alwaysShow = true
+spoon.Cherry.stateAlertDuration = 2
+
+spoon.Cherry:bindHotkeys({
+  start = {ctrl_cmd, "C"},
+  pause = {ctrl_cmd, "P"},
+  stop = {ctrl_cmd, "S"},
+  skip = {ctrl_cmd, "N"}
+})
 
 -- -- call init-local which contains the google authenticator code generation setup
 -- local localstuff=loadfile(hs.configdir .. "/init-local.lua")
